@@ -34,7 +34,7 @@ BUDDYWISE/
 
 ### Clone the Repository
 ```sh
-git clone https://github.com/snehasreeramini/buddywise.git
+git clone https://github.com/snehasriramini/Buddywise-application.git
 cd buddywise
 ```
 

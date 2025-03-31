@@ -34,7 +34,7 @@ BUDDYWISE/
 
 ### Clone the Repository
 ```sh
-git clone https://github.com/your-username/buddywise.git
+git clone https://github.com/snehasreeramini/buddywise.git
 cd buddywise
 ```
 
@@ -79,7 +79,7 @@ This project uses GitHub Actions to:
 # Deploying to Kubernetes
 # Apply Kubernetes Manifests
 ```sh
-kubectl apply -f k8s/
+kubectl apply -f kubernetes/
 ```
 
 ### Check Deployment Status

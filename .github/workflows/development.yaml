@@ -29,6 +29,9 @@ jobs:
           docker build -t buddywise-application-backend:latest ./backend
 
       - name: Push Docker Images to DockerHub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
           docker tag buddywise-application-frontend mydockerhub/buddywise-application-frontend:${{ github.sha }}
@@ -39,8 +42,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    environment: ${{ github.ref == 'refs/heads/main' && 'development' }}
-    steps:
+    steps: 
+    - name: Set up kubectl
       run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            kubectl apply -f k8s/development-deployment.yaml
+        echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig
+        export KUBECONFIG=./kubeconfig
+
+    - name: Deploy to Kubernetes (Development)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        kubectl apply -f k8s/development-deployment.yaml`

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prod-deployment.yaml
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: buddywise-application
+  template:
+    metadata:
+      labels:
+        app: buddywise-application
+    spec:
+      containers:
+      - name: frontend-1
+        image: buddywise-application-frontend
+      - name: backend-1
+        image: buddywise-application-backend
+        ports:
+        - containerPort: 8080

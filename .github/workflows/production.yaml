@@ -7,7 +7,7 @@ on:
 jobs:
  build:
     runs-on: ubuntu-latest
- steps:
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -20,10 +20,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y python3-dev python3-pip python3-venv build-essential libffi-dev libssl-dev
-    
+
       - name: Build Backend (Python)
         working-directory: backend
         run: |
+          python3 -m venv venv
+          source venv/bin/activate
           pip3 install --upgrade pip setuptools wheel
           pip3 install -r requirements.txt
           
@@ -32,7 +34,7 @@ jobs:
           docker build -t buddywise-application-frontend:latest ./frontend
           docker build -t buddywise-application-backend:latest ./backend
 
-     - name: Push Docker Images to DockerHub
+      - name: Push Docker Images to DockerHub
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -43,16 +45,16 @@ jobs:
           docker push mydockerhub/buddywise-application-frontend:${{ github.sha }}
           docker push mydockerhub/buddywise-application-backend:${{ github.sha }}
 
-  deploy:
+ deploy:
     runs-on: ubuntu-latest
     needs: build
     steps: 
-    - name: Set up kubectl
-      run: |
-        echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig
-        export KUBECONFIG=./kubeconfig
+      - name: Set up kubectl
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig
+          export KUBECONFIG=./kubeconfig
 
-    - name: Deploy to Kubernetes (Development)
-      if: github.ref == 'refs/heads/main'
-      run: |
-        kubectl apply -f k8s/prod-deployment.yaml`
+      - name: Deploy to Kubernetes (Production)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          kubectl apply -f k8s/prod-deployment.yaml`

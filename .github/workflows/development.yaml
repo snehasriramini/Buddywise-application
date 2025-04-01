@@ -34,8 +34,6 @@ jobs:
           
       - name: Build Backend (Python)
         working-directory: backend
-        with:
-          python-version: "3.13"
         run: |
           python3 -m venv venv
           source venv/bin/activate

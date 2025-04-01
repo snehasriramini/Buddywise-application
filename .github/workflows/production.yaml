@@ -10,6 +10,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          python-version: "3.13"
+          cache: "pip"
 
       - name: Build Frontend
         working-directory: frontend
@@ -19,16 +22,19 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-dev python3-pip python3-venv build-essential libffi-dev libssl-dev    
+          python -m pip install --upgrade pip
+          python -m pip install ruff
+        #sudo apt-get install -y python3-dev python3-pip python3-venv build-essential libffi-dev libssl-dev  
+
+      - name: Run Ruff
+        run: ruff check --output-format=github      
 
       - name: Build Backend (Python)
         working-directory: backend
-        with:
-          python-version: "3.13"
         run: |
           python3 -m venv venv
           source venv/bin/activate
-          pip install -r requirements.txt
+          pip install -r requirements.txt   
           
       - name: Build Docker Images
         run: |
